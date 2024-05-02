@@ -30,4 +30,4 @@ const AuthContextProvider = (props) => {
     </AuthContext.Provider>
 }
  
-export {AuthContextProvider, AuthContext}
+export  {AuthContextProvider, AuthContext}

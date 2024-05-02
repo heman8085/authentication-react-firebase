@@ -1,13 +1,17 @@
-import React, { useContext, useState } from "react";
-import classes from "./ProfileForm.module.css";
+import React, { useState, useContext } from "react";
 import { AuthContext } from "../../store/Auth-context";
+import classes from "./ProfileForm.module.css";
+import { useHistory } from "react-router-dom";
 
 const ProfileForm = () => {
   const [newPassword, setNewPassword] = useState("");
   const authCtx = useContext(AuthContext);
+  const history = useHistory();
 
-  const submitHandler = (e) => {
-    e.preventDefault();
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+    // add validation
 
     fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBbtBrLaYdQSC7H3DI7eo2o0w5hm_kfDFU",
@@ -19,13 +23,20 @@ const ProfileForm = () => {
           returnSecureToken: false,
         }),
         headers: {
-          "Context-Type": "application/json",
+          "Content-Type": "application/json",
         },
       }
-    ).then((response) => {
-      //....
-    });
+    )
+      .then((res) => {
+        // assumption: Always succeeds!
+        history.replace("/");
+      })
+      .catch((error) => {
+        console.error("Error updating password:", error);
+      });
   };
+
+
   return (
     <form className={classes.form} onSubmit={submitHandler}>
       <div className={classes.control}>
@@ -34,7 +45,8 @@ const ProfileForm = () => {
           type="password"
           id="new-password"
           minLength="7"
-          onChange={(e) => setNewPassword(e.target.value)}
+          value={newPassword}
+          onChange={(event) => setNewPassword(event.target.value)}
         />
       </div>
       <div className={classes.action}>
