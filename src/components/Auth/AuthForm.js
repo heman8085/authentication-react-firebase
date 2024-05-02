@@ -1,12 +1,17 @@
-import { useState } from "react";
-
+import { useContext, useState } from "react";
+import { AuthContext } from "../../store/Auth-context";
 import classes from "./AuthForm.module.css";
+import { useHistory } from "react-router-dom";
 
 const AuthForm = () => {
+  const history = useHistory();
   const [isLogin, setIsLogin] = useState(true);
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+const authCtx = useContext(AuthContext)
+
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -22,7 +27,7 @@ const AuthForm = () => {
     } else {
       url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBbtBrLaYdQSC7H3DI7eo2o0w5hm_kfDFU";
     }
-      fetch(url,
+       fetch(url,
         {
           method: "POST",
           body: JSON.stringify({
@@ -31,7 +36,7 @@ const AuthForm = () => {
             returnSecureToken: true
           }),
           headers: {
-            'Content-type': 'application/json'
+            'Content-Type': 'application/json'
           }
         }
       ).then((response) => {
@@ -49,7 +54,8 @@ const AuthForm = () => {
           })
          }
       }).then((data) => { 
-        console.log(data)
+        authCtx.login(data.idToken)
+        history.replace('/');
       })
         .catch((error) => {
         alert(error.message);
